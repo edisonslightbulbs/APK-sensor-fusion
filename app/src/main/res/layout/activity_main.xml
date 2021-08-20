@@ -7,22 +7,22 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/XAxisLabel"
+        android:id="@+id/GravityLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="X-Axis"
+        android:text="Gravity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.182"
+        app:layout_constraintHorizontal_bias="0.168"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.483" />
 
     <TextView
-        android:id="@+id/YAxisLabel"
+        android:id="@+id/GyroscopeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Y-Axis"
+        android:text="Gyroscope"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,13 +30,13 @@
         app:layout_constraintVertical_bias="0.483" />
 
     <TextView
-        android:id="@+id/ZAxisLabel"
+        android:id="@+id/AccelerometerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Z-Axis"
+        android:text="Accelerometer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.787"
+        app:layout_constraintHorizontal_bias="0.855"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.483" />
@@ -78,10 +78,10 @@
         app:layout_constraintVertical_bias="0.525" />
 
     <TextView
-        android:id="@+id/AccelerometerLabel"
+        android:id="@+id/SensorMagnitudeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accelerometer Readings"
+        android:text="Sensor Magnitude Readings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

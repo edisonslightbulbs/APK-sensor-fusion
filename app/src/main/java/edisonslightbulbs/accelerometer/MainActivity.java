@@ -16,17 +16,20 @@ import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    TextView m_accelerometerX;
-    TextView m_accelerometerY;
-    TextView m_accelerometerZ;
+    TextView m_gravityMagnitude;
+    TextView m_gyroscopeMagnitude;
+    TextView m_accelerometerMagnitude;
 
-    private SensorManager m_sensorManager;
+    private Sensor m_gravity;
+    private Sensor m_gyroscope;
     private Sensor m_accelerometer;
 
-    // output file
-    String m_file;
+    private SensorManager m_sensorManager;
 
-    // round up to n number of decimal places
+    String m_file;
+    int m_sensorLogNumber = 0;
+
+    // precision
     DecimalFormat df = new DecimalFormat("#.######");
 
     private static final String TAG = "MAIN_ACTIVITY";
@@ -35,29 +38,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        m_file = Utils.filePath(this, DIRECTORY, FILE_NAME);
+        // initialize output file
+        m_file = Utils.file(this, DIRECTORY, FILE_NAME);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         df.setRoundingMode(RoundingMode.CEILING);
-
         m_sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        // initialize accelerometer
         if (m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             m_accelerometer = m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Utils.toast(this, "accelerometer detected");
         } else {
-            Utils.toast(this, "sorry, accelerometer not detected");
             Log.e(TAG, "-- accelerometer sensor not found!");
         }
 
-        m_accelerometerX = findViewById(R.id.accXTextView);
-        m_accelerometerY = findViewById(R.id.accYTextView);
-        m_accelerometerZ = findViewById(R.id.accZTextView);
+        // initialize gravity sensor
+        if (m_sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null){
+            m_gravity = m_sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        } else{
+            Log.e(TAG, "-- gravity sensor not found!");
+        }
 
-        m_accelerometerX.setText("0.0");
-        m_accelerometerY.setText("0.0");
-        m_accelerometerZ.setText("0.0");
+        // initialize gyroscope
+        if (m_sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null){
+            m_gyroscope = m_sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        } else{
+            Log.e(TAG, "-- gyroscope sensor not found!");
+        }
+
+        m_gravityMagnitude = findViewById(R.id.accXTextView);
+        m_gyroscopeMagnitude = findViewById(R.id.accYTextView);
+        m_accelerometerMagnitude = findViewById(R.id.accZTextView);
+
+        m_gravityMagnitude.setText("0.0");
+        m_gyroscopeMagnitude.setText("0.0");
+        m_accelerometerMagnitude.setText("0.0");
+
+
     }
 
     @Override
@@ -67,22 +86,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public final void onSensorChanged(SensorEvent event) {
-        String xValue = df.format(event.values[0]);
-        String yValue = df.format(event.values[1]);
-        String zValue = df.format(event.values[2]);
+        m_sensorLogNumber++;
+        String gravityMagnitude = "0";
+        String gyroscopeMagnitude = "0";
+        String accelerometerMagnitude = "0";
 
-        m_accelerometerX.setText(xValue);
-        m_accelerometerY.setText(yValue);
-        m_accelerometerZ.setText(zValue);
+        if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
+            gravityMagnitude = df.format(Utils.magnitude(event));
+        }
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
+            gyroscopeMagnitude = df.format(Utils.magnitude(event));
+        }
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            accelerometerMagnitude = df.format(Utils.magnitude(event));
+    }
+        m_gravityMagnitude.setText(gravityMagnitude);
+        m_gyroscopeMagnitude.setText(gyroscopeMagnitude);
+        m_accelerometerMagnitude.setText(accelerometerMagnitude);
 
-        // write to file
-        String data = xValue + ", " + yValue + ", " + zValue + "\n";
+        String data = m_sensorLogNumber + ", " + gravityMagnitude + ", " + gyroscopeMagnitude + ", " + accelerometerMagnitude + "\n";
         Utils.writeFile(m_file, data);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        m_sensorManager.registerListener(this, m_gravity, SensorManager.SENSOR_DELAY_NORMAL);
+        m_sensorManager.registerListener(this, m_gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
         m_sensorManager.registerListener(this, m_accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
